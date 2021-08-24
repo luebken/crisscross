@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: registration-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: registration-role
+subjects:
+- kind: ServiceAccount
+  name: crisscross-d6b6774f9279
+  namespace: crossplane-system

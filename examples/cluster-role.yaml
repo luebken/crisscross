@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: registration-role
+rules:
+- apiGroups: ["crisscross.crossplane.io"]
+  resources: ["registrations"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["crisscross.crossplane.io"]
+  resources: ["registrations/status"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["s3.aws.crossplane.io"]
+  resources: ["buckets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["s3.aws.crossplane.io"]
+  resources: ["buckets/status"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]

@@ -54,6 +54,76 @@ appropriate action in the cluster based on the response. For an example of how
 simple a "PaaF" can be, take a look at [nop-paaf](/examples/nop-paaf), which
 just reports that a resource exists and all other operations are no-ops.
 
+## Getting started
+
+Install the provider: 
+```
+kubectl crossplane install provider hasheddan/crisscross
+```
+Check the provider:
+```
+kubectl get providers
+NAME         INSTALLED   HEALTHY   PACKAGE                AGE
+crisscross   True        True      hasheddan/crisscross   41s
+````
+Find the crisscross pod: 
+```
+kubectl get pods -n crossplane-system
+NAME                                       READY   STATUS    RESTARTS   AGE
+crisscross-d6b6774f9279-7796f645f6-pnvnl   1/1     Running   0          118s
+```
+Inspect the logs:
+```
+kubectl logs -f crisscross-d6b6774f9279-7796f645f6-pnvnl  -n crossplane-system
+```
+For more logs install the debug ControllerConfig: https://crossplane.io/docs/v1.3/reference/troubleshoot.html#provider-logs
+
+
+Install an example managed resource which we are going to register a crisscross
+registration for:
+```
+# Create a (hopefully) unique S3 bucket name
+BUCKET_NAME=test-bucket-$RANDOM
+
+# Install an S3 bucket
+cat <<EOF | kubectl apply -f -
+apiVersion: s3.aws.crossplane.io/v1beta1
+kind: Bucket
+metadata:
+  name: $BUCKET_NAME
+spec:
+  forProvider:
+    acl: public-read-write
+    locationConstraint: us-east-1
+EOF
+```
+
+Build and install a service deployment:
+```
+cd examples/nop-paaf
+docker build . -t luebken/nop-paaf
+docker push luebken/nop-paaf
+kubectl apply -f deploy.yaml
+kubectl expose deployment nop-paaf --type=NodePort --name=nop-paaf
+```
+
+Check the service:
+```
+kubectl get pods
+kubectl get svc #grab cluster-api
+```
+
+RBAC for criss-cross
+```
+kubectl apply -f cluster-role.yaml
+kubectl apply -f cluster-rolebinding.yaml #get the right service account via kubectl get sa -n crossplane-system
+```
+
+Create the registration: 
+```
+kubectl apply -f examples/registration.yaml #get the endpoint from the exposed deplyoment clusterip
+```
+
 ## License
 
 Crisscross is under the Apache 2.0 license.

@@ -4,6 +4,6 @@ metadata:
   name: paaf
 spec:
   typeRef:
-    apiVersion: storage.gcp.crossplane.io/v1alpha3
+    apiVersion: s3.aws.crossplane.io/v1beta1
     kind: Bucket
-  endpoint: http://172.18.0.2:32062
+  endpoint: http://10.96.95.165:8081
